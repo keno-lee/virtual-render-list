@@ -197,3 +197,47 @@ function vue3getSlot(_ctx: any, name: string) {
 }
 
 export const getSlot = isVue2 ? vue2getSlot : vue3getSlot;
+
+export type StyleType =
+  | string
+  | Array<string | { [key: string]: any }>
+  | { [key: string]: any };
+
+export function mergeStyles(...styles: StyleType[]): string {
+  let mergedStyles = '';
+  styles.forEach((style) => {
+    if (typeof style === 'string') {
+      mergedStyles += style + ';';
+    } else if (Array.isArray(style)) {
+      mergedStyles += mergeStyles(...style);
+    } else if (typeof style === 'object') {
+      Object.entries(style).forEach(([key, value]) => {
+        if (value) {
+          mergedStyles += `${key}:${value};`;
+        }
+      });
+    }
+  });
+  return mergedStyles;
+}
+
+export type ClassType = string | Array<string> | { [key: string]: boolean };
+
+export function mergeClasses(...classes: ClassType[]): string {
+  let mergedClasses = '';
+  classes.forEach((cls) => {
+    if (typeof cls === 'string') {
+      mergedClasses += ' ' + cls;
+    } else if (Array.isArray(cls)) {
+      mergedClasses += mergeClasses(...cls);
+    } else if (typeof cls === 'object') {
+      Object.entries(cls).forEach(([key, value]) => {
+        if (value) {
+          mergedClasses += ' ' + key;
+        }
+      });
+    }
+  });
+  console.log('mergedClasses', mergedClasses.trim());
+  return mergedClasses.trim();
+}

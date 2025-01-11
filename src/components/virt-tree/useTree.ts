@@ -141,6 +141,10 @@ export const customFieldNames = {
     type: Number,
     default: 2,
   },
+  itemClass: {
+    type: [String, Array, Object],
+    default: '',
+  },
 
   showLine: {
     type: Boolean,

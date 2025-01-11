@@ -7,7 +7,7 @@ import {
 } from './useTree';
 import VirtTreeNode from './VirtTreeNode';
 import { VirtList } from '../virt-list';
-import { _h, _h2Slot, getSlot } from '../../utils';
+import { _h, _h2Slot, getSlot, mergeClasses } from '../../utils';
 import type { TreeNode } from './type';
 
 export const VirtTree = defineComponent({
@@ -57,6 +57,7 @@ export const VirtTree = defineComponent({
       iconSize,
       showLine,
       draggable,
+      itemClass,
     } = this.$props as TreeProps;
 
     const renderTreeNode = ({
@@ -126,9 +127,8 @@ export const VirtTree = defineComponent({
           itemKey: 'key',
           itemGap,
           buffer,
+          itemClass: mergeClasses('virt-tree-item', itemClass as any),
           ...this.$attrs,
-          // 暂时不支持外部传入class，后面要把该参数改成一个string|object|array
-          itemClass: 'virt-tree-item',
         },
         class: {
           'is-dragging': dragging,

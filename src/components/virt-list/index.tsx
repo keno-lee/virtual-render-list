@@ -23,7 +23,7 @@ import type {
   VirtListReturn,
 } from './type';
 
-import { _h, _h2Slot, _hChild, getSlot } from '../../utils';
+import { _h, _h2Slot, _hChild, getSlot, mergeStyles } from '../../utils';
 
 const defaultProps = {
   itemGap: 0,
@@ -900,7 +900,7 @@ const VirtList = defineComponent({
       default: 0,
     },
     listStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     listClass: {
@@ -908,7 +908,7 @@ const VirtList = defineComponent({
       default: '',
     },
     itemStyle: {
-      type: String,
+      type: [String, Array, Object, Function],
       default: '',
     },
     itemClass: {
@@ -920,7 +920,7 @@ const VirtList = defineComponent({
       default: '',
     },
     headerStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     footerClass: {
@@ -928,7 +928,7 @@ const VirtList = defineComponent({
       default: '',
     },
     footerStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     stickyHeaderClass: {
@@ -936,7 +936,7 @@ const VirtList = defineComponent({
       default: '',
     },
     stickyHeaderStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     stickyFooterClass: {
@@ -944,7 +944,7 @@ const VirtList = defineComponent({
       default: '',
     },
     stickyFooterStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
   },
@@ -996,9 +996,11 @@ const VirtList = defineComponent({
             {
               key: 'slot-sticky-header',
               class: stickyHeaderClass,
-              style: `position: sticky; z-index: 10; ${
-                horizontal ? 'left: 0' : 'top: 0;'
-              } ${stickyHeaderStyle}`,
+              style: mergeStyles(
+                'position: sticky; z-index: 10;',
+                horizontal ? 'left: 0' : 'top: 0;',
+                stickyHeaderStyle,
+              ),
               ref: 'stickyHeaderRefEl',
               attrs: {
                 'data-id': 'stickyHeader',
@@ -1015,9 +1017,11 @@ const VirtList = defineComponent({
             {
               key: 'slot-sticky-footer',
               class: stickyFooterClass,
-              style: `position: sticky; z-index: 10; ${
-                horizontal ? 'right: 0' : 'bottom: 0;'
-              } ${stickyFooterStyle}`,
+              style: mergeStyles(
+                'position: sticky; z-index: 10;',
+                horizontal ? 'right: 0' : 'bottom: 0;',
+                stickyFooterStyle,
+              ),
               ref: 'stickyFooterRefEl',
               attrs: {
                 'data-id': 'stickyFooter',
@@ -1061,7 +1065,6 @@ const VirtList = defineComponent({
 
     const { listTotalSize, virtualSize, renderBegin } = reactiveData;
 
-    const itemGapStyle = itemGap > 0 ? `padding: ${itemGap / 2}px 0; ` : '';
     const renderMainList = (): VNode | null => {
       const mainList = [];
       for (let index = 0; index < renderList.length; index += 1) {
@@ -1075,7 +1078,12 @@ const VirtList = defineComponent({
                 typeof itemClass === 'function'
                   ? itemClass(currentItem, index)
                   : itemClass,
-              style: `${itemGapStyle}${itemStyle}`,
+              style: mergeStyles(
+                itemGap > 0 ? `padding: ${itemGap / 2}px 0;` : '',
+                typeof itemStyle === 'function'
+                  ? itemStyle(currentItem, index)
+                  : itemStyle,
+              ),
               attrs: {
                 id: currentItem[itemKey],
                 resizeObserver: resizeObserver,

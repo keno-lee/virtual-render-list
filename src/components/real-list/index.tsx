@@ -12,7 +12,7 @@ import {
   type VNode,
 } from 'vue-demi';
 import { ObserverItem } from '../common/ObserverItem';
-import { _h, _hChild, getSlot } from '../../utils';
+import { _h, _hChild, getSlot, mergeStyles } from '../../utils';
 import type { SlotSize } from '../virt-list/type';
 import type { NormalEmitFunction, RealListProps } from './type';
 
@@ -523,39 +523,39 @@ const RealList = defineComponent({
       default: 100,
     },
     headerClass: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     headerStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     footerClass: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     footerStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     stickyHeaderClass: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     stickyHeaderStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     stickyFooterClass: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
     stickyFooterStyle: {
-      type: String,
+      type: [String, Array, Object],
       default: '',
     },
   },
-  setup(props, ctx) {
+  setup(props: any, ctx) {
     const emitFunction: NormalEmitFunction<any> = {
       scroll: (e: Event) => {
         ctx.emit('scroll', e);
@@ -598,7 +598,10 @@ const RealList = defineComponent({
             {
               key: 'slot-sticky-header',
               class: stickyHeaderClass,
-              style: `position: sticky; z-index: 10; 'top: 0; ${stickyHeaderStyle}`,
+              style: mergeStyles(
+                'position: sticky; z-index: 10; top: 0;',
+                stickyHeaderStyle,
+              ),
               ref: 'stickyHeaderRefEl',
               attrs: {
                 'data-id': 'stickyHeader',
@@ -615,7 +618,10 @@ const RealList = defineComponent({
             {
               key: 'slot-sticky-footer',
               class: stickyFooterClass,
-              style: `position: sticky; z-index: 10; bottom: 0; ${stickyFooterStyle}`,
+              style: mergeStyles(
+                'position: sticky; z-index: 10; bottom: 0;',
+                stickyFooterStyle,
+              ),
               ref: 'stickyFooterRefEl',
               attrs: {
                 'data-id': 'stickyFooter',
